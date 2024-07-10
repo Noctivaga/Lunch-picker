@@ -41,7 +41,7 @@
             font-size: 16px;
             line-height: 16px;
             position: relative;
-            top: -2px; /* Adjust this value as needed for vertical centering */
+            top: -2px;
         }
         .delete-btn:hover {
             background-color: #cc0000;
@@ -117,7 +117,28 @@
     </div>
 
     <ul id="restaurant-list">
-        <!-- Restaurant list starts empty -->
+        <!-- Initial list of restaurants -->
+        <li>O2 Valley<button class="delete-btn">✖</button></li>
+        <li>Hi Pot<button class="delete-btn">✖</button></li>
+        <li>Neighborhood Kitchen<button class="delete-btn">✖</button></li>
+        <li>Tarim Garden<button class="delete-btn">✖</button></li>
+        <li>Orange Square<button class="delete-btn">✖</button></li>
+        <li>Taiwan Porridge<button class="delete-btn">✖</button></li>
+        <li>Siam Station<button class="delete-btn">✖</button></li>
+        <li>Marufuku<button class="delete-btn">✖</button></li>
+        <li>Captain Loui<button class="delete-btn">✖</button></li>
+        <li>Sizzling Pot House<button class="delete-btn">✖</button></li>
+        <li>DH Noodle<button class="delete-btn">✖</button></li>
+        <li>Wei's Fish<button class="delete-btn">✖</button></li>
+        <li>Paik's Noodle<button class="delete-btn">✖</button></li>
+        <li>Tofu House<button class="delete-btn">✖</button></li>
+        <li>Hunan Mifen<button class="delete-btn">✖</button></li>
+        <li>Dish n' Dash<button class="delete-btn">✖</button></li>
+        <li>Duan Chun Zhen<button class="delete-btn">✖</button></li>
+        <li>Super Duper Burgers<button class="delete-btn">✖</button></li>
+        <li>Pho Ha Noi<button class="delete-btn">✖</button></li>
+        <li>HiroNori Ramen<button class="delete-btn">✖</button></li>
+        <li>Mingkee Deli<button class="delete-btn">✖</button></li>
     </ul>
 
     <h3>Previously Picked Restaurants</h3>
@@ -196,14 +217,19 @@
         function addRestaurant() {
             const newRestaurant = document.getElementById('new-restaurant').value.trim();
             if (newRestaurant) {
-                const li = document.createElement('li');
-                li.textContent = newRestaurant;
-                const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = '✖';
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.onclick = () => li.remove();
-                li.appendChild(deleteBtn);
-                document.getElementById('restaurant-list').appendChild(li);
+                const restaurantList = document.getElementById('restaurant-list');
+                const existingRestaurants = Array.from(restaurantList.getElementsByTagName('li')).map(li => li.childNodes[0].nodeValue.trim());
+
+                if (!existingRestaurants.includes(newRestaurant)) {
+                    const li = document.createElement('li');
+                    li.textContent = newRestaurant;
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = '✖';
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.onclick = () => li.remove();
+                    li.appendChild(deleteBtn);
+                    restaurantList.appendChild(li);
+                }
                 document.getElementById('new-restaurant').value = ''; // Clear the input field
             }
         }
@@ -217,119 +243,5 @@
         // Initial call to update the history list when the page loads
         updateHistoryList();
     </script>
-<body>
-    <h1>Pick a Restaurant</h1>
-    <div id="current-time">Today is Tuesday, 7/9/2024, 2:15:05 PM</div>
-
-    <div class="top-section">
-        <button onclick="pickRestaurant()">Pick a Restaurant</button>
-        <h2 id="result"></h2>
-
-        <div class="form-container">
-            <input type="text" id="new-restaurant" placeholder="Add new restaurant" onkeypress="handleKeyPress(event)">
-            <button onclick="addRestaurant()">Add Restaurant</button>
-        </div>
-    </div>
-
-    <ul id="restaurant-list">
-        <!-- Restaurant list starts empty -->
-    <li>O2 Valley<button class="delete-btn">✖</button></li><li>Hi Pot<button class="delete-btn">✖</button></li><li>Neighborhood Kitchen<button class="delete-btn">✖</button></li><li>Tarim Garden<button class="delete-btn">✖</button></li><li>Orange Square<button class="delete-btn">✖</button></li><li>Taiwan Porridge<button class="delete-btn">✖</button></li><li>Siam Station<button class="delete-btn">✖</button></li><li>Marufuku<button class="delete-btn">✖</button></li><li>Captain Loui<button class="delete-btn">✖</button></li><li>Sizzling Pot House<button class="delete-btn">✖</button></li><li>DH Noodle<button class="delete-btn">✖</button></li><li>Wei's Fish<button class="delete-btn">✖</button></li><li>Paik's Noodle<button class="delete-btn">✖</button></li><li>Tofu House<button class="delete-btn">✖</button></li><li>Hunan Mifen<button class="delete-btn">✖</button></li><li>Dish n' Dash<button class="delete-btn">✖</button></li><li>Duan Chun Zhen<button class="delete-btn">✖</button></li><li>Super Duper Burgers<button class="delete-btn">✖</button></li><li>Pho Ha Noi<button class="delete-btn">✖</button></li><li>HiroNori Ramen<button class="delete-btn">✖</button></li><li>Mingkee Deli<button class="delete-btn">✖</button></li></ul>
-
-    <h3>Previously Picked Restaurants</h3>
-    <ul id="history-list"><li>O2 Valley - Picked on 6/20/2024</li></ul>
-
-    <script>
-        function updateTime() {
-            const now = new Date();
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const day = days[now.getDay()];
-            const date = now.toLocaleDateString();
-            const time = now.toLocaleTimeString();
-
-            document.getElementById('current-time').innerText = `Today is ${day}, ${date}, ${time}`;
-        }
-
-        setInterval(updateTime, 1000); // Update the time every second
-        updateTime(); // Initial call to display time immediately
-
-        function getSelectionHistory() {
-            const history = JSON.parse(localStorage.getItem('selectionHistory')) || [];
-            return history;
-        }
-
-        function saveSelectionHistory(history) {
-            localStorage.setItem('selectionHistory', JSON.stringify(history));
-        }
-
-        function updateHistoryList() {
-            const historyList = document.getElementById('history-list');
-            historyList.innerHTML = ''; // Clear the current list
-            const history = getSelectionHistory();
-            history.forEach(entry => {
-                const li = document.createElement('li');
-                const date = new Date(entry.timestamp).toLocaleDateString();
-                li.textContent = `${entry.name} - Picked on ${date}`;
-                historyList.appendChild(li);
-            });
-        }
-
-        function pickRestaurant() {
-            const list = document.getElementById('restaurant-list').getElementsByTagName('li');
-            const restaurants = Array.from(list).map(li => li.childNodes[0].nodeValue.trim());
-
-            if (restaurants.length === 0) {
-                document.getElementById('result').innerText = "No restaurants available. Please add some restaurants first.";
-                return;
-            }
-
-            const history = getSelectionHistory();
-            const twoWeeksAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
-
-            const availableRestaurants = restaurants.filter(restaurant => {
-                const lastPicked = history.find(entry => entry.name === restaurant);
-                return !lastPicked || lastPicked.timestamp < twoWeeksAgo;
-            });
-
-            if (availableRestaurants.length === 0) {
-                document.getElementById('result').innerText = "No restaurants available that haven't been picked in the last two weeks.";
-                return;
-            }
-
-            const randomIndex = Math.floor(Math.random() * availableRestaurants.length);
-            const chosenRestaurant = availableRestaurants[randomIndex];
-
-            document.getElementById('result').innerText = `You should go to: ${chosenRestaurant}`;
-
-            const newEntry = { name: chosenRestaurant, timestamp: Date.now() };
-            history.push(newEntry);
-            saveSelectionHistory(history);
-            updateHistoryList(); // Update the history list with the new selection
-        }
-
-        function addRestaurant() {
-            const newRestaurant = document.getElementById('new-restaurant').value.trim();
-            if (newRestaurant) {
-                const li = document.createElement('li');
-                li.textContent = newRestaurant;
-                const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = '✖';
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.onclick = () => li.remove();
-                li.appendChild(deleteBtn);
-                document.getElementById('restaurant-list').appendChild(li);
-                document.getElementById('new-restaurant').value = ''; // Clear the input field
-            }
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                addRestaurant();
-            }
-        }
-
-        // Initial call to update the history list when the page loads
-        updateHistoryList();
-    </script>
-
 </body>
 </html>
