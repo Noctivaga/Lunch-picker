@@ -89,6 +89,9 @@
             margin-top: 20px;
         }
         #history-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin: 10px 0;
             padding: 10px;
             background-color: #e2e3e5;
@@ -108,6 +111,7 @@
 
     <div class="top-section">
         <button onclick="pickRestaurant()">Pick a Restaurant</button>
+        <button onclick="clearHistory()">Clear All History</button>
         <h2 id="result"></h2>
 
         <div class="form-container">
@@ -118,31 +122,31 @@
 
     <ul id="restaurant-list">
         <!-- Initial list of restaurants -->
-        <li>O2 Valley<button class="delete-btn">✖</button></li>
-        <li>Hi Pot<button class="delete-btn">✖</button></li>
-        <li>Neighborhood Kitchen<button class="delete-btn">✖</button></li>
-        <li>Tarim Garden<button class="delete-btn">✖</button></li>
-        <li>Orange Square<button class="delete-btn">✖</button></li>
-        <li>Taiwan Porridge<button class="delete-btn">✖</button></li>
-        <li>Siam Station<button class="delete-btn">✖</button></li>
-        <li>Marufuku<button class="delete-btn">✖</button></li>
-        <li>Captain Loui<button class="delete-btn">✖</button></li>
-        <li>Sizzling Pot House<button class="delete-btn">✖</button></li>
-        <li>DH Noodle<button class="delete-btn">✖</button></li>
-        <li>Wei's Fish<button class="delete-btn">✖</button></li>
-        <li>Paik's Noodle<button class="delete-btn">✖</button></li>
-        <li>Tofu House<button class="delete-btn">✖</button></li>
-        <li>Hunan Mifen<button class="delete-btn">✖</button></li>
-        <li>Dish n' Dash<button class="delete-btn">✖</button></li>
-        <li>Duan Chun Zhen<button class="delete-btn">✖</button></li>
-        <li>Super Duper Burgers<button class="delete-btn">✖</button></li>
-        <li>Pho Ha Noi<button class="delete-btn">✖</button></li>
-        <li>HiroNori Ramen<button class="delete-btn">✖</button></li>
-        <li>Mingkee Deli<button class="delete-btn">✖</button></li>
-        <li>YGF Malatang<button class="delete-btn">✖</button></li>
-        <li>Curry Hyuga<button class="delete-btn">✖</button></li>
-        <li>Tofu Plus<button class="delete-btn">✖</button></li>
-        <li>Yu Noodle<button class="delete-btn">✖</button></li>
+        <li>O2 Valley<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Hi Pot<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Neighborhood Kitchen<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Tarim Garden<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Orange Square<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Taiwan Porridge<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Siam Station<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Marufuku<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Captain Loui<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Sizzling Pot House<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>DH Noodle<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Wei's Fish<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Paik's Noodle<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Tofu House<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Hunan Mifen<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Dish n' Dash<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Duan Chun Zhen<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Super Duper Burgers<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Pho Ha Noi<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>HiroNori Ramen<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Mingkee Deli<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>YGF Malatang<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Curry Hyuga<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Tofu Plus<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
+        <li>Yu Noodle<button class="delete-btn" onclick="deleteRestaurant(this)">✖</button></li>
     </ul>
 
     <h3>Previously Picked Restaurants</h3>
@@ -177,10 +181,13 @@
             const historyList = document.getElementById('history-list');
             historyList.innerHTML = ''; // Clear the current list
             const history = getSelectionHistory();
-            history.forEach(entry => {
+            const twoWeeksAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
+            const recentHistory = history.filter(entry => entry.timestamp >= twoWeeksAgo);
+            saveSelectionHistory(recentHistory); // Save only the recent history
+            recentHistory.forEach(entry => {
                 const li = document.createElement('li');
                 const date = new Date(entry.timestamp).toLocaleDateString();
-                li.textContent = `${entry.name} - Picked on ${date}`;
+                li.innerHTML = `${entry.name} - Picked on ${date} <button class="delete-btn" onclick="deleteHistoryEntry('${entry.name}')">✖</button>`;
                 historyList.appendChild(li);
             });
         }
@@ -236,6 +243,22 @@
                 }
                 document.getElementById('new-restaurant').value = ''; // Clear the input field
             }
+        }
+
+        function deleteRestaurant(button) {
+            button.parentElement.remove();
+        }
+
+        function deleteHistoryEntry(name) {
+            const history = getSelectionHistory();
+            const updatedHistory = history.filter(entry => entry.name !== name);
+            saveSelectionHistory(updatedHistory);
+            updateHistoryList();
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('selectionHistory');
+            updateHistoryList();
         }
 
         function handleKeyPress(event) {
